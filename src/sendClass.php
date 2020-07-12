@@ -1,5 +1,9 @@
 <?php
 
+namespace SendViaGmail\Send;
+
+use Illuminate\Support\Facades\Mail;
+
 class sendClass {
 
     public static function sendEmails($data, $message)
@@ -13,42 +17,76 @@ class sendClass {
         // Get Switch Limit 
         $limit = $data['limit'];
 
-        $x = null; // Limit
-        $y = 1;    // SMTP By Index    
+        $x = null; // Count Sent Emails
+        $y = 0;    // SMTP By Index    
 
         foreach($emails as $email){
 
-            echo 'SMTP Provider: '.$smtp[$y]['provider'].'<br>';
-            echo 'SMTP Email: '.$smtp[$y]['email'].'<br>';
+            /**
+             * 
+             * Setting Mail Driver at Runtime
+             */
 
-            echo 'Message To: '.$email['email'].'<br>';
+            $currentSmtp = $data['smtp'][$y];
 
-            echo 'Message Title: '.$message['title'].'<br>';
-            echo 'Message Body: '.$message['body'].'<br><br>';
+            config([
+                    
+                'mail.driver'=> $currentSmtp->driver,
+                'mail.host'=> $currentSmtp->host,
+                'mail.port'=> $currentSmtp->port,
+                'mail.username'=> $currentSmtp->username,
+                'mail.password'=> $currentSmtp->password,
+                'mail.encryption'=> $currentSmtp->encryption         
             
-            
-            $x++; // Increase Limit By One
+            ]);
+
+            /**
+             * 
+             * Send Emails
+             * 
+             * ( $passData ) for passing data to your template 
+             */
+
+            $passData = [];
+
+            Mail::send($message->view_template, $passData, function($msg) use ($currentSmtp, $email, $message){
+                
+                // From SMTP Email
+                $msg->from($currentSmtp->username, 'Send Via Gmail SMTP');
+
+                // To Email
+                $msg->to($email->email, $email->name);
+
+                // Reply To SMTP Email
+                $msg->replyTo($currentSmtp->username, 'Send Via Gmail SMTP');
+
+                // Message Subject
+                $msg->subject($message->subject);
+
+            });
+
+            // Increase Counter By One
+            $x++; 
 
             /**
              * 
              * Check limit
-             * And Switch SMTP
+             * And Switch SMTP ( If $x == $limit )
              * 
              */
 
             if($x == $limit){
-                
+
                 $y++;
-                $x = 0;
-                echo '=========== <br>';
-                
+                $x = null;                
             }
             
         }
+
     }
     
 
 }
 
-
+?>
 
