@@ -5,6 +5,6 @@
         "name": "Mahmoud Mohsen",
         "email": "me@mahmoud-mohsen.com"
     }],
-    "minimum-stability": "Production",
+    "minimum-stability": "dev",
     "require": {}
 }
