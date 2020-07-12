@@ -32,20 +32,23 @@ use SendViaGmail\Send\sendClass;
 in function
 
 ```
+    public function index()
+    {
       sendClass::sendEmails(
       [
       'emails' => array(),
       'smtp' => array(),
-      'limit' => 500 // Google SMTP Limit is 500 Email Per Email
+      'limit' => 500 // Google SMTP Limit is 500 Email Per Email Daily Also you Can Change This Value
       ],
 
       array('subject' => 'New Test Email', 'view_template' => 'emails.test')
       );
+      ...
 ```
 
-## Try it and if you have any question Get in Touch
+## If you have any question get in touch
 
 ```
-Email: me@mahmoud-mohsen.com
+me@mahmoud-mohsen.com
 ```
 
